@@ -1,0 +1,31 @@
+kind: Ingress
+
+metadata:
+
+  name: "nginx-ingress"
+
+  annotations:
+
+    kubernetes.io/ingress.class: alb
+
+    alb.ingress.kubernetes.io/scheme: internet-facing
+
+  labels:
+
+    app: nginx-ingress
+
+spec:
+
+  rules:
+
+    - http:
+
+        paths:
+
+          - path: /*
+
+            backend:
+
+              serviceName: "nginx-deployment"
+
+              servicePort: 80
