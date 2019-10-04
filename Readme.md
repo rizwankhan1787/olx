@@ -46,3 +46,6 @@ kubernetes.io/role/elb            1
 Private subnets in your VPC should be tagged accordingly so that Kubernetes knows that it can use them for internal load balancers:
 Key 	                        Value
 kubernetes.io/role/internal-elb  1
+
+
+Use templates directory to create and deploy ingress controller and use helm to create helm chart to render objects for reuse
