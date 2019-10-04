@@ -1,0 +1,48 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ include "dubbizle.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "dubbizle.name" . }}
+    helm.sh/chart: {{ include "dubbizle.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "dubbizle.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "dubbizle.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}_webapp
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:["/bin/sh"]
+          args: ["-ec", "echo 'Itsworking' >> /var/log/check.txt ; sleep 1;  echo 'NOTFOUND' >> /var/log/402 ; sleep 2 ; echo 'FORBIDDEN' >> /var/log/403 ; sleep 3; echo 'ApplicationError' >> /var/log/502 ; sleep 3;  echo 'BADGATEWAY' >> /var/log/503; sleep 3; exit 0;"]
+          volumeMounts:
+          - name: shared-logs
+            mountPath: /var/log 
+
+        - name: nginx
+          image: nginx:alpine
+          ports:
+          - containerPort: 80
+          volumeMounts:
+          - name: shared-logs
+            mountPath: /usr/share/nginx/html
+          - name: config-map
+            mountPath: /etc/nginx/conf.d/default.conf
+            subPath: default.conf  
+          resources:
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+            requests:
+              cpu: "1"
+              memory: "1Gi"

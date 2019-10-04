@@ -1,31 +1,17 @@
+apiVersion: extensions/v1beta1
 kind: Ingress
-
 metadata:
-
-  name: "nginx-ingress"
-
+  name: "{{ .Values.chart }}-ingress"
   annotations:
-
     kubernetes.io/ingress.class: alb
-
     alb.ingress.kubernetes.io/scheme: internet-facing
-
   labels:
-
     app: nginx-ingress
-
 spec:
-
   rules:
-
     - http:
-
         paths:
-
           - path: /*
-
             backend:
-
-              serviceName: "nginx-deployment"
-
+              serviceName: "{{ .Values.chart }}-service"
               servicePort: 80
